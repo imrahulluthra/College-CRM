@@ -16,6 +16,13 @@ import { CounselorWorkloadTable } from "@/features/dashboard/counselor-workload-
 import { TodaysOperations } from "@/features/dashboard/todays-operations";
 import { RecentLeadsTable } from "@/features/dashboard/recent-leads-table";
 
+function greeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export default async function DashboardPage() {
   const user = await requireUser();
   const supabase = await createClient();
@@ -36,9 +43,11 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          {greeting()}, {user.fullName.split(" ")[0]}
+        </h1>
         <p className="text-sm text-muted-foreground">
-          What&apos;s happening with admissions right now.
+          Here&apos;s what&apos;s happening with admissions right now.
         </p>
       </div>
 

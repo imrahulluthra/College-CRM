@@ -15,17 +15,20 @@ export function MobileNav({ roles }: { roles: UserRole[] }) {
       {NAV_ITEMS.filter((item) => !item.roles || item.roles.some((r) => roles.includes(r))).map(
         (item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "shrink-0 rounded-md px-3 py-1.5 text-sm font-medium",
+                "flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
                 active
-                  ? "bg-secondary text-secondary-foreground"
-                  : "text-muted-foreground hover:bg-secondary/60"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-secondary"
               )}
             >
+              <Icon className="size-4" />
               {item.label}
             </Link>
           );

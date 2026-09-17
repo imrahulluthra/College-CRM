@@ -21,15 +21,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-svh w-full">
-      <aside className="hidden w-64 shrink-0 flex-col border-r bg-background p-4 md:flex">
-        <div className="mb-6 flex items-center gap-2 px-2">
-          <GraduationCap className="size-6" />
-          <span className="font-semibold">College CRM</span>
+      <aside className="fixed inset-y-0 left-0 hidden w-64 shrink-0 flex-col border-r bg-card p-4 md:flex">
+        <div className="mb-6 flex items-center gap-2.5 px-2 pt-1">
+          <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
+            <GraduationCap className="size-5" />
+          </div>
+          <div className="leading-tight">
+            <p className="text-sm font-semibold">College CRM</p>
+            <p className="text-xs text-muted-foreground">Admissions</p>
+          </div>
         </div>
         <SidebarNav roles={user.roles} />
-        <div className="mt-auto flex items-center gap-3 border-t pt-4">
+        <div className="mt-auto flex items-center gap-3 rounded-lg border bg-secondary/40 p-2.5">
           <Avatar>
-            <AvatarFallback>{initials}</AvatarFallback>
+            <AvatarFallback className="bg-primary/10 text-primary">{initials}</AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{user.fullName}</p>
@@ -38,18 +43,22 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </p>
           </div>
         </div>
-        <LogoutButton />
+        <div className="mt-1">
+          <LogoutButton />
+        </div>
       </aside>
-      <main className="min-w-0 flex-1 overflow-x-hidden">
-        <div className="flex items-center justify-between border-b bg-background px-4 py-3 md:hidden">
+      <main className="min-w-0 flex-1 overflow-x-hidden md:pl-64">
+        <div className="sticky top-0 z-20 flex items-center justify-between border-b bg-background/80 px-4 py-3 backdrop-blur md:hidden">
           <div className="flex items-center gap-2">
-            <GraduationCap className="size-5" />
+            <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <GraduationCap className="size-4" />
+            </div>
             <span className="font-semibold">College CRM</span>
           </div>
           <LogoutButton />
         </div>
         <MobileNav roles={user.roles} />
-        <div className="p-4 md:p-8">{children}</div>
+        <div className="mx-auto w-full max-w-6xl p-4 md:p-8">{children}</div>
       </main>
     </div>
   );
