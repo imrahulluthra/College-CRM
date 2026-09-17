@@ -1,7 +1,6 @@
 "use server";
 
 import { randomBytes } from "node:crypto";
-import { revalidatePath } from "next/cache";
 
 import { requireUser } from "@/lib/auth";
 import { writeAuditLog } from "@/lib/audit/log";
@@ -128,8 +127,9 @@ export async function convertLeadToApplicant(
     }),
   ]);
 
-  revalidatePath(`/leads/${leadId}`);
-  revalidatePath("/leads");
-  revalidatePath("/dashboard");
+  // Deliberately NO revalidatePath here: revalidating swaps the lead page to
+  // the "already an applicant" view, which unmounts this button and its
+  // one-time-password dialog before the user can read it. The success dialog
+  // reloads the page itself once the user closes it (convert-applicant.tsx).
   return { success: { email: lead.email, tempPassword } };
 }
