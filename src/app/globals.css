@@ -121,3 +121,16 @@
     text-wrap: balance;
   }
 }
+
+/* Subtle shimmer for skeleton loaders (see components/ui/skeleton.tsx). */
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-sweep {
+    display: none;
+  }
+}
