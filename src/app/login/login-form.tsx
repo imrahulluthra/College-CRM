@@ -39,7 +39,7 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
         </p>
       )}
 
-      <Button type="submit" disabled={isPending} className="mt-2">
+      <Button type="submit" disabled={isPending} className="mt-2 w-full">
         {isPending && <Loader2 className="animate-spin" />}
         Sign in
       </Button>

@@ -52,7 +52,7 @@ export function CreateLeadForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" className="w-full sm:w-auto">
           <Plus />
           Add Lead
         </Button>
@@ -119,7 +119,7 @@ export function CreateLeadForm({
           )}
 
           <div className="sm:col-span-2">
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
               {isPending && <Loader2 className="animate-spin" />}
               Add lead
             </Button>

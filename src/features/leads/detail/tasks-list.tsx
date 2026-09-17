@@ -55,6 +55,8 @@ export function TasksList({
                     variant="ghost"
                     disabled={isPending}
                     title="Mark complete"
+                    aria-label="Mark task complete"
+                    className="text-muted-foreground hover:bg-success/10 hover:text-success"
                     onClick={() =>
                       startTransition(async () => {
                         const res = await completeTask(task.id, leadId);
@@ -69,6 +71,8 @@ export function TasksList({
                     variant="ghost"
                     disabled={isPending}
                     title="Cancel"
+                    aria-label="Cancel task"
+                    className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     onClick={() =>
                       startTransition(async () => {
                         const res = await cancelTask(task.id, leadId);

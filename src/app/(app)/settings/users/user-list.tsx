@@ -64,6 +64,7 @@ export function UserList({ users }: { users: StaffRow[] }) {
                   variant="ghost"
                   size="sm"
                   disabled={isPending}
+                  className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                   onClick={() =>
                     startTransition(async () => {
                       const res = await deactivateStaffUser(u.id);

@@ -33,7 +33,7 @@ export function CreateKeyForm() {
           <Label htmlFor="name">Key name</Label>
           <Input id="name" name="name" placeholder="College website" required />
         </div>
-        <Button type="submit" disabled={isPending}>
+        <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
           {isPending && <Loader2 className="animate-spin" />}
           Generate key
         </Button>
@@ -55,6 +55,7 @@ export function CreateKeyForm() {
               type="button"
               variant="ghost"
               size="icon"
+              className="shrink-0"
               onClick={() => {
                 if (state.success) {
                   navigator.clipboard.writeText(state.success.fullKey);

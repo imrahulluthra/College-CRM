@@ -57,7 +57,7 @@ export function CreateTaskForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="w-full sm:w-auto">
           <Plus /> New task
         </Button>
       </DialogTrigger>
@@ -71,7 +71,7 @@ export function CreateTaskForm({
             <Label htmlFor="title">Title</Label>
             <Input id="title" name="title" placeholder="Follow up tomorrow at 11 AM" required />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="taskType">Type</Label>
               <Select name="taskType" defaultValue="follow_up">
@@ -110,7 +110,7 @@ export function CreateTaskForm({
 
           {state.error && <p className="text-sm text-destructive">{state.error}</p>}
 
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
             {isPending && <Loader2 className="animate-spin" />}
             Create task
           </Button>

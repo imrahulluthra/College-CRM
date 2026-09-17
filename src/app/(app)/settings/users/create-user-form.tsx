@@ -86,7 +86,7 @@ export function CreateUserForm() {
         )}
 
         <div className="sm:col-span-2">
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
             {isPending && <Loader2 className="animate-spin" />}
             Create login
           </Button>
@@ -104,11 +104,12 @@ export function CreateUserForm() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center justify-between gap-2 rounded-md border bg-muted p-3">
-            <code className="text-sm">{state.success?.tempPassword}</code>
+            <code className="text-sm break-all">{state.success?.tempPassword}</code>
             <Button
               type="button"
               variant="ghost"
               size="icon"
+              className="shrink-0"
               onClick={() => {
                 if (state.success) {
                   navigator.clipboard.writeText(state.success.tempPassword);
