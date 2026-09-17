@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { getCurrentUser, homePathFor } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 const loginSchema = z.object({
@@ -36,9 +37,9 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "Incorrect email or password." };
   }
 
-  redirect(
-    parsed.data.redirectTo && parsed.data.redirectTo.startsWith("/")
-      ? parsed.data.redirectTo
-      : "/dashboard"
-  );
+  if (parsed.data.redirectTo && parsed.data.redirectTo.startsWith("/")) {
+    redirect(parsed.data.redirectTo);
+  }
+  const user = await getCurrentUser();
+  redirect(user ? homePathFor(user) : "/dashboard");
 }

@@ -8,7 +8,7 @@
 | `admissions_manager` | Every lead | Manage leads, assign/reassign counselors, update status, manage programs/cycles/sources |
 | `counselor` | Only leads currently assigned to them | Update status, add notes/tasks, on their own leads |
 | `document_reviewer` | Every lead (needed for Phase 2/3 document review) | Read-only on leads in Phase 1 — document actions arrive in Phase 2 |
-| `student` | (Phase 2+) | N/A in Phase 1 — no student-facing surface exists yet |
+| `student` | Only their own application, profile, documents, and fee | Complete their application, upload/replace documents, view fee status — never any other student's data, enforced by RLS (`student_user_id = auth.uid()`) |
 
 Defined in `supabase/migrations/*_extensions_and_helpers.sql` (the
 `user_role` enum) and `*_profiles_and_roles.sql` (`user_roles` table +

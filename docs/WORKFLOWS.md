@@ -78,10 +78,33 @@ here is hardcoded.
 Walk-ins and phone enquiries: **Leads → Add Lead**. Same duplicate check by
 phone as the API path; same activity/audit trail.
 
+## 7. Lead → Applicant → Student (Phase 2)
+
+1. On a lead's detail page, **Application** or **Documents** tab (or the
+   prompt there) → **Convert to Applicant**. This creates a student login for
+   the lead's email, an application (status DRAFT), an empty student profile,
+   and a fee row from the program's fee — reusing the same lead record, so all
+   Phase 1 history stays attached. A one-time temporary password is shown once;
+   share it with the student securely.
+2. The student signs in at the same `/login` and lands on the **student
+   portal** (`/portal`) — staff and students share one login, routed by role.
+3. Student fills **My Application** (personal + academic) and submits (locks
+   the form), uploads required **Documents** (PDF/JPG/PNG ≤ 5 MB), and sees
+   **Fees**.
+4. A **Document Reviewer** (or admin/manager) opens the lead's **Documents**
+   tab, views each file (short-lived signed URL), and Approves or Rejects with
+   a reason. A rejected document shows its reason in the student portal and can
+   be re-uploaded; an approved one locks.
+
+**Online fee payment is deferred.** The portal shows fee status read-only; the
+payment gateway (Razorpay) needs API keys and is a follow-up change — until
+then, staff record payments by updating the `payments` row. Everything else in
+the Phase 2 journey works end to end.
+
 ## Not yet implemented (tracked for later phases)
 
-- Forced password change on first staff login.
-- Round-robin/program-based auto-assignment (Phase 1 is deliberately manual
-  — see `docs/PRD.md`).
-- Everything under "Application"/"Documents" tabs, student login, payments,
-  WhatsApp, campaigns — Phases 2–4.
+- Forced password change on first login (staff or student).
+- Online payment gateway + webhook (needs Razorpay keys).
+- Round-robin/program-based auto-assignment (Phase 1 is deliberately manual).
+- Admissions dashboard / Student 360 / reports (Phase 3), WhatsApp &
+  campaigns (Phase 4).

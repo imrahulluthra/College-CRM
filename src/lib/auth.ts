@@ -46,6 +46,38 @@ export async function requireUser(allowedRoles?: UserRole[]): Promise<CurrentUse
   return user;
 }
 
+export function isStudent(user: CurrentUser) {
+  return user.roles.includes("student");
+}
+
+export function isStaff(user: CurrentUser) {
+  return user.roles.some((r) => r !== "student");
+}
+
+/** Landing route for a user based on role (students → portal, staff → dashboard). */
+export function homePathFor(user: CurrentUser) {
+  return isStaff(user) ? "/dashboard" : "/portal";
+}
+
+/** Gate a staff-only area: signed-out → /login, students → /portal. */
+export async function requireStaff(allowedRoles?: UserRole[]): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  if (!isStaff(user)) redirect("/portal");
+  if (allowedRoles && !user.roles.some((r) => allowedRoles.includes(r))) {
+    redirect("/dashboard");
+  }
+  return user;
+}
+
+/** Gate the student portal: signed-out → /login, staff → /dashboard. */
+export async function requireStudent(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+  if (!isStudent(user)) redirect("/dashboard");
+  return user;
+}
+
 export function isAdminOrManager(user: CurrentUser) {
   return user.roles.includes("super_admin") || user.roles.includes("admissions_manager");
 }

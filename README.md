@@ -127,6 +127,7 @@ docs/                   PRD, architecture, database, API, RBAC, workflows
 ## Status
 
 - ✅ **Phase 1 — College CRM (Lead Capture & Lead Tracking):** implemented
-- ⬜ Phase 2 — Student Dashboard (Application, Documents, Fees)
+- ✅ **Phase 2 — Student Portal (Application, Documents, Fees):** implemented
+  (online payment gateway deferred — see `docs/WORKFLOWS.md`)
 - ⬜ Phase 3 — College Admissions Dashboard (Students, Documents, Admissions)
 - ⬜ Phase 4 — WhatsApp API + Campaigns + Nurturing

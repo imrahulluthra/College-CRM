@@ -105,14 +105,24 @@ campaigns, AI features, round-robin/program-based auto-assignment.
 
 ---
 
-## Phase 2 — Student Dashboard: Application, Documents & Fees (not started)
+## Phase 2 — Student Portal: Application, Documents & Fees (implemented)
 
-Convert a lead into an applicant/student (preserving lead history), create
-a student login, and let the student complete their application, upload
-documents, track document approval/rejection with resubmission, and pay
-fees via a payment gateway with webhook-driven status updates. Full detail
-in the original roadmap (kept in project history / can be re-derived from
-the roadmap doc) — write this section out properly before Phase 2 starts.
+Convert a lead into an applicant/student (preserving lead history), create a
+student login, and let the student complete their application, upload
+documents, track document approval/rejection with resubmission, and see fee
+status. **Implemented:** lead→applicant conversion with student-login
+creation; role-based routing (students → `/portal`, staff → `/dashboard`);
+student portal (dashboard progress, application form with submit-lock, document
+upload to a private bucket with status/resubmit, read-only fees); staff-side
+document review (approve/reject with reason via signed-URL view) wired into the
+lead detail Application/Documents tabs. See `docs/WORKFLOWS.md` §7 and
+`docs/DATABASE.md`.
+
+**Deferred:** the online payment gateway (Razorpay) + webhook — needs API
+keys; fee status is read-only and updated by staff until then. Also cut as
+YAGNI for now: normalized `academic_records`, a `document_reviews` history
+table (covered by `audit_logs`), `payment_transactions`, and a student
+notifications table (the dashboard's computed next-action covers it).
 
 ## Phase 3 — College Admissions Dashboard: Students, Documents & Admissions (not started)
 

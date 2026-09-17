@@ -87,6 +87,38 @@ leak all data to whoever queries it. `security_invoker = true` makes the
 view apply RLS as the querying user instead, exactly as if they'd queried
 the underlying tables directly.
 
+## Phase 2 tables (student portal)
+
+A converted lead keeps its `leads.id` and gains a student login (a `profiles`
+row with role `student`) plus:
+
+- **`applications`** — one per lead (`lead_id` unique), owned by a student
+  login (`student_user_id`). Carries the application `status` and
+  `submitted_at`. RLS scopes a student to `student_user_id = auth.uid()`.
+- **`student_profiles`** — personal + academic details the student fills in,
+  keyed 1:1 to an application. Academic fields are flat columns (`tenth_percentage`,
+  `twelfth_percentage`, `graduation_percentage`, `entrance_*`) rather than a
+  normalized `academic_records` table — fine for the single fixed-shape program.
+- **`document_types`** — college-configured list of documents to collect.
+- **`student_documents`** — one row per (application, document type). The review
+  outcome lives on the row (`status` = UPLOADED/APPROVED/REJECTED +
+  `rejection_reason` + reviewer); full history goes to `audit_logs`, so there's
+  no separate `document_reviews` table. `storage_path` points into the private
+  `student-documents` bucket.
+- **`payments`** — fee display (total/paid/pending/status/due). One row per
+  application, seeded from `programs.fee_amount` at conversion.
+
+**Document storage has no storage RLS policies.** The `student-documents`
+bucket is private (denies all direct client access). Every upload and view goes
+through a server action that checks ownership (or staff role) first, then uses
+the service-role client to upload or mint a short-lived signed URL. This is
+simpler than authoring storage.objects policies and equally locked down —
+nothing but our server, after an auth check, ever touches the bucket.
+
+Cut for now (add when actually needed): `academic_records`,
+`document_reviews`, `payment_transactions`, and a student notifications table
+(the dashboard's computed "what's next" covers the notification need).
+
 ## Extending the schema in later phases
 
 Add new tables in a new numbered migration file rather than editing an

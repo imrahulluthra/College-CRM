@@ -1,6 +1,6 @@
 import { GraduationCap } from "lucide-react";
 
-import { requireUser } from "@/lib/auth";
+import { requireStaff } from "@/lib/auth";
 import { ROLE_LABELS } from "@/lib/permissions";
 import { SidebarNav } from "@/features/nav/sidebar-nav";
 import { MobileNav } from "@/features/nav/mobile-nav";
@@ -11,7 +11,7 @@ import { LogoutButton } from "./logout-button";
 // don't get their own entry in the generated LayoutRoutes union -- only the
 // root layout does -- so this is typed by hand instead of LayoutProps<...>.
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const user = await requireUser();
+  const user = await requireStaff();
   const initials = user.fullName
     .split(" ")
     .map((p) => p[0])

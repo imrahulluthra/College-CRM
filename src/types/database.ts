@@ -59,6 +59,21 @@ export type TaskType =
 
 export type TaskStatus = "pending" | "completed" | "cancelled";
 
+export type ApplicationStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "UNDER_REVIEW"
+  | "APPROVED"
+  | "FEE_PENDING"
+  | "ADMITTED"
+  | "ENROLLED"
+  | "REJECTED"
+  | "WITHDRAWN";
+
+export type DocumentStatus = "UPLOADED" | "APPROVED" | "REJECTED";
+
+export type PaymentStatus = "PENDING" | "PARTIAL" | "PAID";
+
 export interface Database {
   public: {
     Tables: {
@@ -103,6 +118,7 @@ export interface Database {
           degree_level: string | null;
           duration_months: number | null;
           description: string | null;
+          fee_amount: number | null;
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -290,6 +306,103 @@ export interface Database {
           key_prefix: string;
         };
         Update: Partial<Database["public"]["Tables"]["api_keys"]["Row"]>;
+        Relationships: [];
+      };
+      applications: {
+        Row: {
+          id: string;
+          lead_id: string;
+          student_user_id: string | null;
+          program_id: string | null;
+          admission_cycle_id: string | null;
+          status: ApplicationStatus;
+          submitted_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["applications"]["Row"]> & {
+          lead_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["applications"]["Row"]>;
+        Relationships: [];
+      };
+      student_profiles: {
+        Row: {
+          application_id: string;
+          date_of_birth: string | null;
+          gender: string | null;
+          address: string | null;
+          city: string | null;
+          state: string | null;
+          guardian_name: string | null;
+          guardian_phone: string | null;
+          tenth_percentage: number | null;
+          twelfth_percentage: number | null;
+          graduation_percentage: number | null;
+          entrance_exam: string | null;
+          entrance_score: string | null;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]> & {
+          application_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["student_profiles"]["Row"]>;
+        Relationships: [];
+      };
+      document_types: {
+        Row: {
+          id: string;
+          name: string;
+          is_required: boolean;
+          sort_order: number;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["document_types"]["Row"]> & {
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["document_types"]["Row"]>;
+        Relationships: [];
+      };
+      student_documents: {
+        Row: {
+          id: string;
+          application_id: string;
+          document_type_id: string;
+          storage_path: string;
+          file_name: string;
+          status: DocumentStatus;
+          rejection_reason: string | null;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          uploaded_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["student_documents"]["Row"]> & {
+          application_id: string;
+          document_type_id: string;
+          storage_path: string;
+          file_name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["student_documents"]["Row"]>;
+        Relationships: [];
+      };
+      payments: {
+        Row: {
+          id: string;
+          application_id: string;
+          label: string;
+          amount_total: number;
+          amount_paid: number;
+          status: PaymentStatus;
+          due_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["payments"]["Row"]> & {
+          application_id: string;
+          amount_total: number;
+        };
+        Update: Partial<Database["public"]["Tables"]["payments"]["Row"]>;
         Relationships: [];
       };
     };

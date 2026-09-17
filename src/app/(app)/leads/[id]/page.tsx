@@ -12,6 +12,7 @@ import { ActivityTimeline } from "@/features/leads/detail/activity-timeline";
 import { NoteForm } from "@/features/leads/detail/note-form";
 import { CreateTaskForm } from "@/features/leads/detail/create-task-form";
 import { TasksList } from "@/features/leads/detail/tasks-list";
+import { ApplicantPanels } from "@/features/leads/detail/applicant-panels";
 
 export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
   const { id } = await props.params;
@@ -48,6 +49,12 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
         : Promise.resolve({ data: null }),
     ]);
 
+  const { data: application } = await supabase
+    .from("applications")
+    .select("*")
+    .eq("lead_id", id)
+    .maybeSingle();
+
   const notes = activities.filter((a) => a.activity_type === "note");
 
   return (
@@ -66,12 +73,8 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
           <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="notes">Notes</TabsTrigger>
           <TabsTrigger value="tasks">Tasks</TabsTrigger>
-          <TabsTrigger value="application" disabled>
-            Application
-          </TabsTrigger>
-          <TabsTrigger value="documents" disabled>
-            Documents
-          </TabsTrigger>
+          <TabsTrigger value="application">Application</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-4">
@@ -126,6 +129,13 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <ApplicantPanels
+          supabase={supabase}
+          leadId={lead.id}
+          application={application}
+          leadHasEmail={!!lead.email}
+        />
       </Tabs>
     </div>
   );
