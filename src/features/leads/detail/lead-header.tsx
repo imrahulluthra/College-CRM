@@ -2,6 +2,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import type { Database } from "@/types/database";
+import { MessageLeadButton } from "@/features/messaging/message-lead-button";
 import { StatusControl } from "./status-control";
 import { AssignControl } from "./assign-control";
 
@@ -48,6 +49,7 @@ export function LeadHeader({
           </div>
 
           <div className="flex flex-col gap-3 sm:items-end">
+            <MessageLeadButton leadId={lead.id} />
             <div className="flex flex-col gap-1">
               <span className="text-xs font-medium text-muted-foreground">Status</span>
               <StatusControl leadId={lead.id} status={lead.status} />

@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -7,7 +8,7 @@ import { requireStaff } from "@/lib/auth";
 import { writeAuditLog } from "@/lib/audit/log";
 import { createClient } from "@/lib/supabase/server";
 import { getLeadContexts, resolveSegmentLeads } from "@/features/messaging/data";
-import { renderTemplate, sendMessageToLead } from "@/lib/messaging/send";
+import { ensureConversation, renderTemplate, sendMessageToLead } from "@/lib/messaging/send";
 import { processNurtureRules } from "@/lib/messaging/nurture";
 import { ALL_LEAD_STATUSES } from "@/features/leads/status";
 import type { LeadStatus, SegmentDefinition } from "@/types/database";
@@ -19,6 +20,19 @@ export interface ActionState {
 }
 
 const CATEGORIES = ["marketing", "utility", "authentication"] as const;
+
+// ── Open (or start) a lead's WhatsApp conversation from the CRM ──────────────
+// The entry point from a lead's detail page: find-or-create the conversation
+// (RLS insert is gated to leads the staff member can access) and jump into the
+// inbox thread. This is how a 1:1 chat gets started outside campaigns/automation.
+export async function openLeadConversation(leadId: string): Promise<void> {
+  await requireStaff();
+  const parsed = z.string().uuid().safeParse(leadId);
+  if (!parsed.success) redirect("/messaging");
+  const supabase = await createClient();
+  const conversationId = await ensureConversation(supabase, parsed.data);
+  redirect(conversationId ? `/messaging?c=${conversationId}` : "/messaging");
+}
 
 // ── Inbox: reply to a conversation ──────────────────────────────────────────
 const replySchema = z.object({

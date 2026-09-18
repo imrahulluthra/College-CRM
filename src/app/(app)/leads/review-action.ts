@@ -54,5 +54,8 @@ export async function reviewDocument(_prev: ReviewState, formData: FormData): Pr
   });
 
   revalidatePath(`/leads/${parsed.data.leadId}`);
+  // The staff-wide document queue and applicants list also show these docs.
+  revalidatePath("/admissions/documents");
+  revalidatePath("/admissions/students");
   return { ok: true };
 }
