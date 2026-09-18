@@ -159,12 +159,49 @@ Admission-status changes and payment updates are audit-logged; every page is
 gated with `requireStaff([...])` on top of the RLS policies. See
 `docs/WORKFLOWS.md` §8.
 
-## Phase 4 — WhatsApp API + Campaigns + Nurturing (not started)
+## Phase 4 — WhatsApp API + Campaigns + Nurturing (implemented)
 
 A modular communication service (not hardcoded per-feature) connecting
 WhatsApp to leads/applicants/students: an inbox, templates, audience
 segmentation, campaign scheduling and analytics, opt-in/opt-out and
 suppression handling, and idempotent rule-based nurturing automation.
+
+**Implemented** (all over the one Phase 1 lead record; the WhatsApp transport
+is deferred behind a single provider seam):
+
+- **Transport seam** (`src/lib/messaging/provider.ts`) — the one place the real
+  Meta Cloud API call lands. With no WABA credentials in the environment,
+  outbound messages are recorded as `queued` and every surface shows a "not
+  connected" banner; setting `WHATSAPP_PHONE_NUMBER_ID` + `WHATSAPP_ACCESS_TOKEN`
+  swaps the queued return for a real send with no other code change.
+- **Inbox** (`/messaging`, all staff) — a per-lead conversation thread with
+  message history and a reply box; counselor threads are RLS-scoped to their
+  own leads.
+- **Templates** (`/messaging/templates`, admin/manager) — reusable messages
+  with `{{full_name}}`/`{{first_name}}`/`{{program}}`/`{{counselor}}`
+  placeholders substituted per lead at send time.
+- **Segments** (`/messaging/segments`, admin/manager) — saved, live filters
+  over leads (status/program/counselor/city); the audience count is computed
+  fresh, never stored.
+- **Campaigns** (`/messaging/campaigns`, admin/manager) — broadcast a template
+  to a segment; per-recipient outcome and real delivery stats
+  (recipients/sent/failed) come from `campaign_recipients`.
+- **Opt-outs** (`/messaging/opt-outs`, admin/manager) — a suppression list the
+  send service honours before every message (reply, campaign, and automation);
+  leads are opted out from their conversation and opted back in here.
+- **Automation** (`/messaging/automation`, admin/manager) — nurture rules that
+  send a template when a lead is created or reaches a status. The `nurture_runs`
+  ledger (unique rule+lead) makes the evaluator idempotent, so "Run now" (and a
+  future scheduled worker calling the same function) never double-sends.
+
+Sends, campaign runs, opt-out changes, and rule changes are audit-logged; every
+page is gated with `requireStaff([...])` on top of RLS. See `docs/WORKFLOWS.md` §9.
+
+**Deferred:** the live Meta Cloud API adapter and the inbound webhook (need WABA
+credentials); until then outbound is queued and there are no inbound messages.
+A background sender/scheduler (to drain the queue and fire nurture rules on a
+timer) is a follow-up — the idempotent evaluator and the provider seam are
+already shaped for it.
 
 ---
 

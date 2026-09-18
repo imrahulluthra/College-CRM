@@ -74,6 +74,38 @@ export type DocumentStatus = "UPLOADED" | "APPROVED" | "REJECTED";
 
 export type PaymentStatus = "PENDING" | "PARTIAL" | "PAID";
 
+// ── Phase 4: messaging ──────────────────────────────────────────────────────
+export type MessageDirection = "inbound" | "outbound";
+
+export type MessageStatus =
+  | "queued"
+  | "sent"
+  | "delivered"
+  | "read"
+  | "failed"
+  | "received";
+
+export type TemplateCategory = "marketing" | "utility" | "authentication";
+
+export type TemplateStatus = "draft" | "approved" | "rejected";
+
+export type CampaignStatus =
+  | "draft"
+  | "scheduled"
+  | "sending"
+  | "completed"
+  | "cancelled";
+
+export type NurtureTrigger = "lead_created" | "lead_status_changed";
+
+/** A saved audience filter over leads. Empty fields mean "no constraint". */
+export interface SegmentDefinition {
+  statuses?: LeadStatus[];
+  programId?: string;
+  counselorId?: string;
+  city?: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -405,6 +437,168 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["payments"]["Row"]>;
         Relationships: [];
       };
+      message_templates: {
+        Row: {
+          id: string;
+          name: string;
+          category: TemplateCategory;
+          language: string;
+          body: string;
+          status: TemplateStatus;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["message_templates"]["Row"]> & {
+          name: string;
+          body: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["message_templates"]["Row"]>;
+        Relationships: [];
+      };
+      audience_segments: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          definition: SegmentDefinition;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["audience_segments"]["Row"]> & {
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["audience_segments"]["Row"]>;
+        Relationships: [];
+      };
+      campaigns: {
+        Row: {
+          id: string;
+          name: string;
+          template_id: string;
+          segment_id: string | null;
+          status: CampaignStatus;
+          scheduled_at: string | null;
+          sent_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["campaigns"]["Row"]> & {
+          name: string;
+          template_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["campaigns"]["Row"]>;
+        Relationships: [];
+      };
+      conversations: {
+        Row: {
+          id: string;
+          lead_id: string;
+          last_message_at: string | null;
+          last_message_preview: string | null;
+          last_direction: MessageDirection | null;
+          unread_count: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["conversations"]["Row"]> & {
+          lead_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["conversations"]["Row"]>;
+        Relationships: [];
+      };
+      messages: {
+        Row: {
+          id: string;
+          conversation_id: string;
+          lead_id: string;
+          direction: MessageDirection;
+          body: string;
+          status: MessageStatus;
+          template_id: string | null;
+          campaign_id: string | null;
+          sent_by: string | null;
+          provider_message_id: string | null;
+          error: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["messages"]["Row"]> & {
+          conversation_id: string;
+          lead_id: string;
+          direction: MessageDirection;
+          body: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["messages"]["Row"]>;
+        Relationships: [];
+      };
+      campaign_recipients: {
+        Row: {
+          id: string;
+          campaign_id: string;
+          lead_id: string;
+          message_id: string | null;
+          status: MessageStatus;
+          error: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["campaign_recipients"]["Row"]> & {
+          campaign_id: string;
+          lead_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["campaign_recipients"]["Row"]>;
+        Relationships: [];
+      };
+      message_suppressions: {
+        Row: {
+          id: string;
+          lead_id: string;
+          reason: string;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["message_suppressions"]["Row"]> & {
+          lead_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["message_suppressions"]["Row"]>;
+        Relationships: [];
+      };
+      nurture_rules: {
+        Row: {
+          id: string;
+          name: string;
+          trigger: NurtureTrigger;
+          to_status: LeadStatus | null;
+          template_id: string;
+          is_active: boolean;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["nurture_rules"]["Row"]> & {
+          name: string;
+          trigger: NurtureTrigger;
+          template_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["nurture_rules"]["Row"]>;
+        Relationships: [];
+      };
+      nurture_runs: {
+        Row: {
+          id: string;
+          rule_id: string;
+          lead_id: string;
+          message_id: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["nurture_runs"]["Row"]> & {
+          rule_id: string;
+          lead_id: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["nurture_runs"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: {
       lead_funnel_counts: {
@@ -434,6 +628,15 @@ export interface Database {
       lead_activity_type: LeadActivityType;
       task_type: TaskType;
       task_status: TaskStatus;
+      application_status: ApplicationStatus;
+      document_status: DocumentStatus;
+      payment_status: PaymentStatus;
+      message_direction: MessageDirection;
+      message_status: MessageStatus;
+      template_category: TemplateCategory;
+      template_status: TemplateStatus;
+      campaign_status: CampaignStatus;
+      nurture_trigger: NurtureTrigger;
     };
     CompositeTypes: Record<string, never>;
   };

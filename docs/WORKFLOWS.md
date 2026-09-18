@@ -136,9 +136,41 @@ applicant and document-review views):
    collection, a per-program breakdown, and counselor performance (from the
    `counselor_workload` view).
 
+## 9. Messaging leads over WhatsApp (Phase 4)
+
+Under **Communications** in the sidebar. WhatsApp itself isn't connected in
+this environment (no WABA credentials), so every send is recorded and
+**queued** — a banner says so on each screen. Adding `WHATSAPP_PHONE_NUMBER_ID`
+and `WHATSAPP_ACCESS_TOKEN` wires the real Meta Cloud API at one seam
+(`src/lib/messaging/provider.ts`) with no other change.
+
+1. **Inbox** (`/messaging`, all staff) — one conversation thread per lead.
+   Open a lead's thread and reply; counselors see only threads for their own
+   leads, admin/manager and reviewers see all. From the thread you can **opt
+   the lead out** (or back in).
+2. **Templates** (`/messaging/templates`) — reusable messages with
+   `{{first_name}}`, `{{full_name}}`, `{{program}}`, `{{counselor}}`
+   placeholders filled per lead when sent.
+3. **Segments** (`/messaging/segments`) — a saved filter over leads
+   (status/program/counselor/city). The lead count is computed live, so a
+   segment never goes stale.
+4. **Campaigns** (`/messaging/campaigns`) — pick a template + segment, create a
+   draft, then **Send**: one message is queued per lead in the audience,
+   opted-out leads skipped, and per-recipient delivery is tracked on the row.
+5. **Automation** (`/messaging/automation`) — rules that send a template when a
+   lead is created or reaches a status. Each rule fires **at most once per
+   lead** (the `nurture_runs` ledger). Press **Run now** to evaluate them; a
+   scheduled worker can call the same idempotent function later.
+6. **Opt-outs** (`/messaging/opt-outs`) — everyone suppressed from messaging.
+   The send service skips these leads everywhere; opt a lead back in here.
+
+Sends, campaign runs, opt-out changes and rule changes are audit-logged.
+
 ## Not yet implemented (tracked for later phases)
 
 - Forced password change on first login (staff or student).
 - Online payment gateway + webhook (needs Razorpay keys).
 - Round-robin/program-based auto-assignment (Phase 1 is deliberately manual).
-- WhatsApp & campaigns (Phase 4).
+- Live WhatsApp transport + inbound webhook (needs WABA credentials) and a
+  background sender/scheduler to drain the queue and fire nurture rules on a
+  timer (Phase 4 ships the provider seam and idempotent evaluator ready for it).

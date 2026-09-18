@@ -119,6 +119,36 @@ Cut for now (add when actually needed): `academic_records`,
 `document_reviews`, `payment_transactions`, and a student notifications table
 (the dashboard's computed "what's next" covers the notification need).
 
+## Phase 4 tables (messaging)
+
+All hang off `leads.id` — messaging is staff-only, no student rows.
+
+- **`message_templates`** — reusable WhatsApp messages with `{{placeholder}}`
+  bodies, a category (marketing/utility/authentication) and a local approval
+  `status`.
+- **`conversations`** — one thread per lead (`lead_id` unique) with denormalized
+  `last_message_*` for a cheap inbox list.
+- **`messages`** — inbound/outbound messages on a conversation, with a delivery
+  `status` (queued→sent→delivered→read/failed, or `received` inbound) and
+  optional `template_id`/`campaign_id`.
+- **`audience_segments`** — a saved filter (`definition` jsonb) over leads;
+  membership is computed live, never stored.
+- **`campaigns`** + **`campaign_recipients`** — a template broadcast to a
+  segment, with one recipient row per lead carrying its own delivery status.
+- **`message_suppressions`** — the opt-out list (`lead_id` unique); the send
+  service checks it before every outbound message.
+- **`nurture_rules`** + **`nurture_runs`** — automation rules and their
+  idempotency ledger. `unique (rule_id, lead_id)` guarantees a rule fires at
+  most once per lead however often the evaluator runs.
+
+RLS follows lead scoping for conversations/messages (`can_access_lead`) and
+admin/manager-writes-staff-reads for the configuration tables. The WhatsApp
+transport is deferred behind `src/lib/messaging/provider.ts`: with no
+`WHATSAPP_*` env vars, outbound messages persist as `queued`.
+
+Cut for now: a normalized `communication_consents` table (the boolean
+suppression list covers opt-out today) and `payment_transactions`.
+
 ## Extending the schema in later phases
 
 Add new tables in a new numbered migration file rather than editing an
@@ -130,5 +160,6 @@ file. Phase 2 will add `applications`, `student_profiles`,
 `academic_records`, `document_types`, `student_documents`,
 `document_reviews`, `payments`, `payment_transactions` — Phase 3 mostly
 builds UI on top of what Phase 1/2 already created rather than adding many
-new tables — Phase 4 adds `conversations`, `messages`, `whatsapp_templates`,
-`campaigns`, `campaign_recipients`, `communication_consents`.
+new tables — Phase 4 added `message_templates`, `conversations`, `messages`,
+`audience_segments`, `campaigns`, `campaign_recipients`, `message_suppressions`,
+`nurture_rules`, `nurture_runs` (see the Phase 4 section above).
