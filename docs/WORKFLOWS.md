@@ -88,9 +88,14 @@ phone as the API path; same activity/audit trail.
    share it with the student securely.
 2. The student signs in at the same `/login` and lands on the **student
    portal** (`/portal`) — staff and students share one login, routed by role.
-3. Student fills **My Application** (personal + academic) and submits (locks
-   the form), uploads required **Documents** (PDF/JPG/PNG ≤ 5 MB), and sees
-   **Fees**.
+3. The student completes the application as a 3-step wizard:
+   **My Application** (personal + academic; **Next** saves and advances) →
+   **Documents** (upload PDF/JPG/PNG ≤ 5 MB; **Back**/**Next**) →
+   **Fees & Submit** (**Back**, plus the final **Submit**). Data and uploads
+   persist across back-and-forth navigation; the application is only
+   submitted from the Fees step. On submit, the student sees a success
+   confirmation and is sent to their dashboard, which shows their Personal
+   and Academic details.
 4. A **Document Reviewer** (or admin/manager) opens the lead's **Documents**
    tab, views each file (short-lived signed URL), and Approves or Rejects with
    a reason. A rejected document shows its reason in the student portal and can

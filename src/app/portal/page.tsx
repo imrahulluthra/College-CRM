@@ -18,6 +18,17 @@ import {
   applicationStatusVariant,
 } from "@/features/portal/application-status";
 
+function DetailRow({ label, value }: { label: string; value: string | number | null | undefined }) {
+  return (
+    <div className="flex justify-between gap-4 py-1.5 text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="text-right font-medium">
+        {value === null || value === undefined || value === "" ? "—" : value}
+      </span>
+    </div>
+  );
+}
+
 export default async function PortalHome() {
   const user = await requireStudent();
   const supabase = await createClient();
@@ -33,12 +44,16 @@ export default async function PortalHome() {
     );
   }
 
-  const [profile, docs, payment, program] = await Promise.all([
+  const [profile, docs, payment, program, lead, cycle] = await Promise.all([
     getMyProfile(supabase, application.id),
     getMyDocuments(supabase, application.id),
     getMyPayment(supabase, application.id),
     application.program_id
       ? supabase.from("programs").select("name").eq("id", application.program_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    supabase.from("leads").select("full_name, phone, email").eq("id", application.lead_id).maybeSingle(),
+    application.admission_cycle_id
+      ? supabase.from("admission_cycles").select("name").eq("id", application.admission_cycle_id).maybeSingle()
       : Promise.resolve({ data: null }),
   ]);
 
@@ -105,6 +120,41 @@ export default async function PortalHome() {
           </ul>
         </CardContent>
       </Card>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal Details</CardTitle>
+          </CardHeader>
+          <CardContent className="divide-y">
+            <DetailRow label="Full name" value={lead.data?.full_name ?? user.fullName} />
+            <DetailRow label="Date of birth" value={profile?.date_of_birth} />
+            <DetailRow label="Gender" value={profile?.gender} />
+            <DetailRow label="Contact number" value={lead.data?.phone} />
+            <DetailRow label="Email" value={lead.data?.email ?? user.email} />
+            <DetailRow label="Address" value={profile?.address} />
+            <DetailRow label="City" value={profile?.city} />
+            <DetailRow label="State" value={profile?.state} />
+            <DetailRow label="Guardian" value={profile?.guardian_name} />
+            <DetailRow label="Guardian phone" value={profile?.guardian_phone} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Academic Details</CardTitle>
+          </CardHeader>
+          <CardContent className="divide-y">
+            <DetailRow label="Program / Course" value={program.data?.name} />
+            <DetailRow label="Academic year" value={cycle.data?.name} />
+            <DetailRow label="10th %" value={profile?.tenth_percentage} />
+            <DetailRow label="12th %" value={profile?.twelfth_percentage} />
+            <DetailRow label="Graduation %" value={profile?.graduation_percentage} />
+            <DetailRow label="Entrance exam" value={profile?.entrance_exam} />
+            <DetailRow label="Entrance score" value={profile?.entrance_score} />
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Button asChild variant="outline" className="h-auto justify-start py-3">

@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireStudent } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -41,6 +45,19 @@ export default async function DocumentsPage() {
         {rows.map((row) => (
           <DocumentItem key={row.typeId} row={row} />
         ))}
+      </div>
+
+      <div className="flex items-center justify-between gap-2 border-t pt-4">
+        <Button asChild variant="outline">
+          <Link href="/portal/application">
+            <ArrowLeft /> Back
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link href="/portal/fees">
+            Next <ArrowRight />
+          </Link>
+        </Button>
       </div>
     </div>
   );

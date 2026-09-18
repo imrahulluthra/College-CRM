@@ -1,8 +1,7 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
+import { useActionState } from "react";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,10 +37,6 @@ function Field({
 export function ApplicationForm({ profile }: { profile: Profile }) {
   const [state, formAction, isPending] = useActionState(saveApplication, initial);
 
-  useEffect(() => {
-    if (state.saved) toast.success("Saved");
-  }, [state.saved]);
-
   return (
     <form action={formAction} className="flex flex-col gap-6">
       <section className="grid gap-4 sm:grid-cols-2">
@@ -67,18 +62,16 @@ export function ApplicationForm({ profile }: { profile: Profile }) {
 
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
 
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Button type="submit" name="intent" value="save" variant="outline" disabled={isPending}>
-          {isPending && <Loader2 className="animate-spin" />}
-          Save draft
-        </Button>
-        <Button type="submit" name="intent" value="submit" disabled={isPending}>
-          Submit application
+      <div className="flex items-center justify-between gap-2 border-t pt-4">
+        <p className="text-xs text-muted-foreground">
+          Your details are saved when you continue. Next: upload documents.
+        </p>
+        <Button type="submit" disabled={isPending} className="shrink-0">
+          {isPending ? <Loader2 className="animate-spin" /> : null}
+          Next
+          {!isPending && <ArrowRight />}
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground">
-        Once you submit, your details lock. Upload your documents from the Documents tab.
-      </p>
     </form>
   );
 }
