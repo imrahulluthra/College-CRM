@@ -204,9 +204,13 @@ verifiable.
 
 0. **Architecture review** — this document. *No code.*
 1. **Step 1 — Inspect** (done; captured in §A).
-2. **Step 2 — Rename + landing.** "Website Integration" → **Integrations**; new
-   `/integrations` dashboard with grouped cards (Website `connected ✓`, Meta
-   Leads, WhatsApp). Presentational; no new backend. Update nav + docs.
+2. **Step 2 — Rename + landing. (done)** "Website Integration" → **Integrations**;
+   new `/integrations` dashboard (`src/app/(app)/integrations`) with grouped
+   cards under Lead sources (Website, Inbound API & Webhook, Meta Lead Ads,
+   CSV Import) and Communication (WhatsApp). Status is real: Website reflects
+   active `api_keys`, WhatsApp reflects `isWhatsappConnected()`; Meta Leads and
+   CSV are honestly shown "Coming soon". The website key management page stays
+   at `/settings/api-keys` as the Website card's Configure target.
 3. **Step 3 — Integration framework.** `integrations`, `integration_secrets`,
    `webhook_events` tables + RLS + TS types; secret encryption helper; generic
    status/health model and card actions (Connect/Configure/Test/Disconnect).

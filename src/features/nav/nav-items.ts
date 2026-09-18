@@ -47,6 +47,6 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/messaging/automation", label: "Automation", icon: Workflow, roles: [...ADMIN], section: "Communications" },
   { href: "/messaging/opt-outs", label: "Opt-outs", icon: ShieldOff, roles: [...ADMIN], section: "Communications" },
 
+  { href: "/integrations", label: "Integrations", icon: Plug, roles: ["super_admin"], section: "Settings" },
   { href: "/settings/users", label: "Users", icon: UserCog, roles: ["super_admin"], section: "Settings" },
-  { href: "/settings/api-keys", label: "Website Integration", icon: Plug, roles: ["super_admin"], section: "Settings" },
 ];
