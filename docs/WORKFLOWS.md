@@ -106,10 +106,39 @@ payment gateway (Razorpay) needs API keys and is a follow-up change — until
 then, staff record payments by updating the `payments` row. Everything else in
 the Phase 2 journey works end to end.
 
+## 8. Running admissions (Phase 3)
+
+For admissions managers and super admins (document reviewers get the
+applicant and document-review views):
+
+1. **Admissions overview** (`/admissions`) — the day's headline numbers:
+   total applicants, submitted, documents pending, admitted, fee pending,
+   enrolled, plus an application funnel showing where applicants drop off.
+   Every figure is a live count from the database.
+2. **Applicants** (`/admissions/students`) — the full applicant list.
+   Search by name/phone/email and filter by program, application status, or
+   assigned counselor. Each row shows document progress (approved/total) and
+   fee status; the name links to the **Student 360** (the lead detail page),
+   where an admin/manager can change the admission status inline (Application
+   Received → Under Review → Approved → Admitted → Enrolled, or
+   Rejected/Withdrawn). Status changes are audit-logged.
+3. **Document review** (`/admissions/documents`) — one queue across every
+   applicant, tabbed Pending review / Rejected / Approved with counts. View
+   each file via a short-lived signed URL and approve or reject with a reason,
+   the same action the lead Documents tab uses.
+4. **Payments** (`/admissions/payments`) — billed / collected / outstanding
+   totals and a per-payment table. Staff record an offline payment (amount
+   paid + status) from the row's **Record** dialog; the student sees the
+   updated status in their portal. Updates are audit-logged. (Online gateway
+   still deferred — see §7.)
+5. **Reports** (`/admissions/reports`) — live aggregation only, no vanity
+   metrics: admissions-funnel conversion rates, document counts, fee
+   collection, a per-program breakdown, and counselor performance (from the
+   `counselor_workload` view).
+
 ## Not yet implemented (tracked for later phases)
 
 - Forced password change on first login (staff or student).
 - Online payment gateway + webhook (needs Razorpay keys).
 - Round-robin/program-based auto-assignment (Phase 1 is deliberately manual).
-- Admissions dashboard / Student 360 / reports (Phase 3), WhatsApp &
-  campaigns (Phase 4).
+- WhatsApp & campaigns (Phase 4).

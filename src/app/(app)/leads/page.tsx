@@ -5,7 +5,7 @@ import { getLeadsList, LEADS_PAGE_SIZE, type LeadListFilters } from "@/features/
 import { getActivePrograms, getCounselors, getLeadSourceOptions, getProfilesMap, getProgramsMap, getLeadSourcesMap } from "@/features/leads/lookups";
 import { LeadFiltersBar } from "@/features/leads/filters-bar";
 import { LeadsTable } from "@/features/leads/leads-table";
-import { LeadsPagination } from "@/features/leads/pagination";
+import { Pagination } from "@/components/pagination";
 import { CreateLeadForm } from "@/features/leads/create-lead-form";
 import type { LeadStatus } from "@/types/database";
 
@@ -59,11 +59,12 @@ export default async function LeadsPage(props: PageProps<"/leads">) {
       <Card>
         <CardContent className="flex flex-col gap-4">
           <LeadsTable leads={leads} programs={programs} sources={sources} profiles={profiles} />
-          <LeadsPagination
+          <Pagination
             page={filters.page}
             pageSize={LEADS_PAGE_SIZE}
             total={total}
             searchParams={sp}
+            basePath="/leads"
           />
         </CardContent>
       </Card>

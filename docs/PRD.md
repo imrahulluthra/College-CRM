@@ -124,13 +124,40 @@ YAGNI for now: normalized `academic_records`, a `document_reviews` history
 table (covered by `audit_logs`), `payment_transactions`, and a student
 notifications table (the dashboard's computed next-action covers it).
 
-## Phase 3 — College Admissions Dashboard: Students, Documents & Admissions (not started)
+## Phase 3 — College Admissions Dashboard: Students, Documents & Admissions (implemented)
 
 Give the college a full Student 360 view (profile, academic data,
 application, documents, payments, communication, activity), a document
 review dashboard (pending/rejected/resubmission/approved queues), admission
 status management, and real-data admissions/program/counselor/document/
 payment reports.
+
+**Implemented** (all real aggregation over the Phase 1/2 schema — no new
+migration was needed; the `applications.status` enum already covers every
+admission stage):
+
+- **Admissions overview** (`/admissions`, admin/manager) — six live KPIs
+  (total applicants, submitted, documents pending, admitted, fee pending,
+  enrolled) and a CSS application funnel with per-stage drop-off.
+- **Applicants list** (`/admissions/students`, admin/manager/reviewer) —
+  search plus program/status/counselor filters, paginated, each row links
+  to the Student 360 (the existing lead detail page).
+- **Student 360** — the lead detail page doubles as the 360; admins/managers
+  get an inline admission-status control on the Application tab.
+- **Document review dashboard** (`/admissions/documents`,
+  admin/manager/reviewer) — pending/rejected/approved queues across every
+  applicant with counts, reusing the existing approve/reject-with-reason
+  review action and signed-URL view.
+- **Payments overview** (`/admissions/payments`, admin/manager) — billed /
+  collected / outstanding totals and a per-payment table with a staff
+  "record payment" dialog (offline entry until the gateway lands).
+- **Reports** (`/admissions/reports`, admin/manager) — admissions funnel
+  conversion, document, fee-collection, per-program, and counselor
+  performance figures, all aggregated live from the database.
+
+Admission-status changes and payment updates are audit-logged; every page is
+gated with `requireStaff([...])` on top of the RLS policies. See
+`docs/WORKFLOWS.md` §8.
 
 ## Phase 4 — WhatsApp API + Campaigns + Nurturing (not started)
 

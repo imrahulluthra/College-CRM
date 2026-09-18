@@ -9,6 +9,7 @@ import {
   applicationStatusVariant,
 } from "@/features/portal/application-status";
 import type { Database } from "@/types/database";
+import { ApplicationStatusControl } from "@/features/admissions/application-status-control";
 import { ConvertApplicantButton } from "./convert-applicant";
 import { DocumentsReview, type ReviewRow } from "./documents-review";
 
@@ -46,11 +47,13 @@ export async function ApplicantPanels({
   leadId,
   application,
   leadHasEmail,
+  canManageAdmission = false,
 }: {
   supabase: Client;
   leadId: string;
   application: Application | null;
   leadHasEmail: boolean;
+  canManageAdmission?: boolean;
 }) {
   if (!application) {
     return (
@@ -83,11 +86,19 @@ export async function ApplicantPanels({
     <>
       <TabsContent value="application" className="mt-4">
         <Card>
-          <CardHeader className="flex-row items-center justify-between">
+          <CardHeader className="flex-row items-center justify-between gap-2">
             <CardTitle>Application</CardTitle>
-            <Badge variant={applicationStatusVariant(application.status)}>
-              {applicationStatusLabel(application.status)}
-            </Badge>
+            {canManageAdmission ? (
+              <ApplicationStatusControl
+                applicationId={application.id}
+                leadId={leadId}
+                status={application.status}
+              />
+            ) : (
+              <Badge variant={applicationStatusVariant(application.status)}>
+                {applicationStatusLabel(application.status)}
+              </Badge>
+            )}
           </CardHeader>
           <CardContent className="divide-y">
             <Row

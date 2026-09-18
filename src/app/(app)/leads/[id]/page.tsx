@@ -135,6 +135,7 @@ export default async function LeadDetailPage(props: PageProps<"/leads/[id]">) {
           leadId={lead.id}
           application={application}
           leadHasEmail={!!lead.email}
+          canManageAdmission={isAdminOrManager(user)}
         />
       </Tabs>
     </div>

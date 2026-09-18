@@ -1,5 +1,17 @@
 import type { ApplicationStatus } from "@/types/database";
 
+export const APPLICATION_STATUSES: ApplicationStatus[] = [
+  "DRAFT",
+  "SUBMITTED",
+  "UNDER_REVIEW",
+  "APPROVED",
+  "FEE_PENDING",
+  "ADMITTED",
+  "ENROLLED",
+  "REJECTED",
+  "WITHDRAWN",
+];
+
 export function applicationStatusLabel(status: ApplicationStatus): string {
   return status
     .toLowerCase()

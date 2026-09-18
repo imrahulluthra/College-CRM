@@ -2,16 +2,18 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-export function LeadsPagination({
+export function Pagination({
   page,
   pageSize,
   total,
   searchParams,
+  basePath,
 }: {
   page: number;
   pageSize: number;
   total: number;
   searchParams: Record<string, string | string[] | undefined>;
+  basePath: string;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
@@ -24,7 +26,7 @@ export function LeadsPagination({
       params.set(key, Array.isArray(value) ? value[0] : value);
     }
     params.set("page", String(targetPage));
-    return `/leads?${params.toString()}`;
+    return `${basePath}?${params.toString()}`;
   }
 
   return (
