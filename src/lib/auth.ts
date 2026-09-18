@@ -81,7 +81,3 @@ export async function requireStudent(): Promise<CurrentUser> {
 export function isAdminOrManager(user: CurrentUser) {
   return user.roles.includes("super_admin") || user.roles.includes("admissions_manager");
 }
-
-export function isSuperAdmin(user: CurrentUser) {
-  return user.roles.includes("super_admin");
-}

@@ -13,16 +13,3 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   document_reviewer: "Document Reviewer",
   student: "Student",
 };
-
-export const STAFF_ROLES: UserRole[] = [
-  "super_admin",
-  "admissions_manager",
-  "counselor",
-  "document_reviewer",
-];
-
-export const ADMIN_ROLES: UserRole[] = ["super_admin", "admissions_manager"];
-
-export function hasAnyRole(userRoles: UserRole[], allowed: UserRole[]) {
-  return userRoles.some((r) => allowed.includes(r));
-}
