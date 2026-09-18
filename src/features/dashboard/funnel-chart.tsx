@@ -1,7 +1,3 @@
-"use client";
-
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -9,41 +5,43 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import type { getFunnel } from "./data";
 
-const chartConfig = {
-  count: { label: "Leads", color: "var(--chart-1)" },
-};
-
 export function FunnelChart({ funnel }: { funnel: Awaited<ReturnType<typeof getFunnel>> }) {
+  const max = Math.max(1, ...funnel.map((s) => s.count));
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Admission Funnel</CardTitle>
-        <CardDescription>
-          Leads that have ever reached each stage, most recent first.
-        </CardDescription>
+        <CardDescription>Leads that have ever reached each stage.</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[280px] w-full">
-          <BarChart data={funnel} layout="vertical" margin={{ left: 8, right: 24 }}>
-            <CartesianGrid horizontal={false} />
-            <XAxis type="number" hide />
-            <YAxis
-              type="category"
-              dataKey="label"
-              tickLine={false}
-              axisLine={false}
-              width={140}
-              tick={{ fontSize: 12 }}
-            />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="count" fill="var(--color-count)" radius={4}>
-              <LabelList dataKey="count" position="right" className="fill-foreground" fontSize={12} />
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+      <CardContent className="flex flex-col gap-3">
+        {funnel.map((stage, i) => {
+          const prev = i > 0 ? funnel[i - 1].count : null;
+          const dropoff = prev && prev > 0 ? Math.round(((prev - stage.count) / prev) * 100) : null;
+          const width = Math.max(2, Math.round((stage.count / max) * 100));
+
+          return (
+            <div key={stage.status} className="flex flex-col gap-1">
+              <div className="flex items-baseline justify-between text-sm">
+                <span className="font-medium">{stage.label}</span>
+                <span className="flex items-baseline gap-2">
+                  {dropoff != null && dropoff > 0 && (
+                    <span className="text-xs text-muted-foreground">−{dropoff}%</span>
+                  )}
+                  <span className="tabular-nums font-semibold">{stage.count}</span>
+                </span>
+              </div>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary transition-all"
+                  style={{ width: `${width}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
   );

@@ -72,21 +72,32 @@ export default async function PortalHome() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Application progress · {pct}%</CardTitle>
+          <CardTitle>Application progress</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
+        <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+          <div className="relative size-28 shrink-0">
+            <div
+              className="size-28 rounded-full"
+              style={{
+                background: `conic-gradient(var(--primary) ${pct * 3.6}deg, var(--muted) 0deg)`,
+              }}
+            />
+            <div className="absolute inset-[10px] flex flex-col items-center justify-center rounded-full bg-card">
+              <span className="text-2xl font-semibold tabular-nums">{pct}%</span>
+              <span className="text-[11px] text-muted-foreground">
+                {completed}/{steps.length} done
+              </span>
+            </div>
           </div>
-          <ul className="flex flex-col gap-2">
+          <ul className="flex w-full flex-1 flex-col gap-2.5">
             {steps.map((step) => (
-              <li key={step.label} className="flex items-center gap-2 text-sm">
+              <li key={step.label} className="flex items-center gap-2.5 text-sm">
                 {step.done ? (
-                  <CheckCircle2 className="size-4 text-success" />
+                  <CheckCircle2 className="size-4 shrink-0 text-success" />
                 ) : (
-                  <Circle className="size-4 text-muted-foreground" />
+                  <Circle className="size-4 shrink-0 text-muted-foreground/50" />
                 )}
-                <span className={step.done ? "text-foreground" : "text-muted-foreground"}>
+                <span className={step.done ? "font-medium text-foreground" : "text-muted-foreground"}>
                   {step.label}
                 </span>
               </li>
